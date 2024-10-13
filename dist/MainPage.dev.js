@@ -55,20 +55,68 @@ function MainPage() {
     } else {
       var noTasksMessage = document.createElement('div');
       noTasksMessage.className = 'main-container';
-      noTasksMessage.innerHTML = "\n                <div class=\"text-main-container\">\n                    <span>No tasks</span>\n                </div>";
+      noTasksMessage.innerHTML = "<div class=\"text-main-container\"><span>No tasks</span></div>";
       root.appendChild(noTasksMessage);
     }
   }
 
   function createTaskElement(task, index) {
     var taskElement = document.createElement('div');
-    taskElement.className = 'task-container';
-    taskElement.innerHTML = "\n            <div class=\"task-container-text\">\n                <h3>".concat(task.title, "</h3>\n                <p>").concat(task.about, "</p>\n            </div>\n            <button class=\"delete-button\" id=\"deleteButton-").concat(index, "\">x</button>");
-    var deleteButton = taskElement.querySelector("#deleteButton-".concat(index));
+    taskElement.className = 'task-element';
+    var taskContainer = document.createElement('button');
+    taskContainer.className = 'task-container';
+    taskContainer.innerHTML = "\n            <div class=\"task-container-text\">\n                <h3>".concat(task.title, "</h3>\n                <p>").concat(task.about, "</p>\n            </div>\n            <button class=\"delete-button\" id=\"deleteButton-").concat(index, "\">x</button>");
+    var deleteButton = taskContainer.querySelector("#deleteButton-".concat(index));
     deleteButton.addEventListener('click', function () {
       return deleteTask(index);
     });
+    var editMenu = document.createElement('div');
+    editMenu.className = 'edit-menu';
+    editMenu.id = "editMenu-".concat(index);
+    editMenu.style.display = 'none';
+    editMenu.innerHTML = "\n            <div class=\"block-buttons\">\n                <button class=\"button-share\"><img src=\"../icons/Share.svg\" alt=\"\"></button>\n                <button class=\"button-i\">i</button>\n                <button class=\"button-edit\"><img src=\"../icons/edit.svg\" alt=\"\"></button>\n            </div>";
+    var buttonShare = editMenu.querySelector('.button-share');
+    var buttonI = editMenu.querySelector('.button-i');
+    var buttonEdit = editMenu.querySelector('.button-edit');
+    buttonShare.addEventListener('click', function () {
+      return Share();
+    });
+    buttonEdit.addEventListener('click', function () {
+      return Edit(index);
+    });
+    taskElement.appendChild(taskContainer);
+    taskElement.appendChild(editMenu);
+    taskContainer.addEventListener('click', function (event) {
+      event.stopPropagation();
+      var isEditMenuVisible = editMenu.style.display === 'flex';
+      editMenu.style.display = isEditMenuVisible ? 'none' : 'flex';
+    });
     return taskElement;
+  }
+
+  function Share() {
+    var shareContainer = document.createElement('div');
+    shareContainer.className = 'share-container';
+    shareContainer.innerHTML = "\n            <div class=\"share-container-content\">\n                <div class=\"share-buttons\">\n                    <button class=\"share-button\"><img src=\"../icons/copy.svg\" alt=\"\"></button>\n                    <button class=\"vk-button\"><img src=\"../icons/vk.svg\" alt=\"\"></button>\n                    <button class=\"telegram-button\"><img src=\"../icons/telegram.svg\" alt=\"\"></button>\n                    <button class=\"whatsapp-button\"><img src=\"../icons/whatsapp.svg\" alt=\"\"></button>\n                    <button class=\"facebook-button\"><img src=\"../icons/facebook.svg\" alt=\"\"></button>\n                </div>\n            </div>";
+    root.appendChild(shareContainer);
+  }
+
+  function Edit(index) {
+    var editContainer = document.createElement('div');
+    editContainer.className = 'edit-container';
+    editContainer.innerHTML = "\n            <div class=\"edit-container-content\">\n                <div class=\"edit-window\">\n                    <input type=\"text\" placeholder=\"Mini Input...\" class=\"edit-title\" >                    \n                    <input type=\"text\" placeholder=\"Max Input...\" class=\"edit-about\" >\n                    <div class=\"buttons\">\n                        <button class=\"cancel\">Cancel</button>\n                        <button class=\"save\">Save</button>\n                    </div>\n                </div>\n            </div>";
+    root.appendChild(editContainer);
+    var cancelButton = editContainer.querySelector('.cancel');
+    var saveButton = editContainer.querySelector('.save');
+    saveButton.addEventListener('click', function () {
+      tasks[index].title = editContainer.querySelector('.edit-title').value;
+      tasks[index].about = editContainer.querySelector('.edit-about').value;
+      root.removeChild(editContainer);
+      render();
+    });
+    cancelButton.addEventListener('click', function () {
+      root.removeChild(editContainer);
+    });
   }
 
   function deleteTask(index) {
