@@ -9,7 +9,7 @@
 .root {
   background-color: #1B1A17;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -111,11 +111,16 @@
   align-items: center;
   cursor: pointer;
 }
+.root .task-element .task-container:active {
+  border: 1px solid #FF8303;
+  background-color: #1F1E1B;
+}
 .root .task-element .task-container-text {
+  max-width: 400px;
   display: flex;
-  align-items: flex-start;
   flex-direction: column;
   color: #F0E3CAA3;
+  word-wrap: break-word;
 }
 .root .task-element .task-container-text h3 {
   font-family: "Roboto";
@@ -138,10 +143,6 @@
 }
 .root .task-element .task-container .delete-button:focus {
   color: #FF8303;
-  border: 1px solid #FF8303;
-  background-color: #1F1E1B;
-}
-.root .task-element .task-container:focus {
   border: 1px solid #FF8303;
   background-color: #1F1E1B;
 }
@@ -183,13 +184,13 @@
 }
 
 .delete-container {
-  width: 100vw;
-  height: 100vh;
+  min-width: 100vw;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #070707E3;
-  position: absolute;
+  position: fixed;
 }
 .delete-container-content {
   max-width: 300px;
@@ -236,7 +237,7 @@
   justify-content: center;
   align-items: flex-end;
   background-color: #070707E3;
-  position: absolute;
+  position: fixed;
 }
 .share-container-content {
   max-width: 400px;
@@ -277,7 +278,7 @@
   justify-content: center;
   align-items: flex-end;
   background-color: #070707E3;
-  position: absolute;
+  position: fixed;
 }
 .edit-container-content {
   max-width: 360px;

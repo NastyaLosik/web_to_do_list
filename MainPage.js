@@ -2,7 +2,8 @@ let root = document.getElementById('root');
 
 function MainPage() {
     let hasTasks = false;
-    let tasks = []; 
+    let deletebutton = false;
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     
     function TaskInput() {
         const container = document.createElement('div');
@@ -29,6 +30,7 @@ function MainPage() {
         if (title && about) {
             const newTask = { title, about };
             tasks.push(newTask);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
             hasTasks = true;
             titleInput.value = '';
             aboutInput.value = '';
@@ -43,30 +45,36 @@ function MainPage() {
         root.appendChild(TaskInput());
         _setupListeners(root);
 
-        if (hasTasks) {
+        if (tasks.length > 0) {
+            hasTasks = true;
             tasks.forEach((task, index) => {
                 const taskElement = createTaskElement(task, index);
                 root.appendChild(taskElement);
             });
         } else {
+            hasTasks = false;
             const noTasksMessage = document.createElement('div');
             noTasksMessage.className = 'main-container';
-            noTasksMessage.innerHTML = `<div class="text-main-container"><span>No tasks</span></div>`;
+            noTasksMessage.innerHTML = `
+                <div class="text-main-container">
+                    <span>No tasks</span>
+                </div>`;
             root.appendChild(noTasksMessage);
         }
     }
 
     function createTaskElement(task, index) {
-        const taskElement = document.createElement('div'); 
-        taskElement.className = 'task-element';
-        const taskContainer = document.createElement('button');
-        taskContainer.className = 'task-container';
+        const taskContainer = document.createElement('div'); 
+        taskContainer.className = 'task-element';
         taskContainer.innerHTML = `
-            <div class="task-container-text">
-                <h3>${task.title}</h3>
-                <p>${task.about}</p>
-            </div>
-            <button class="delete-button" id="deleteButton-${index}">x</button>`;
+            <div class="task-container">
+                <div class="task-container-text">
+                    <h3>${task.title}</h3>
+                    <p>${task.about}</p>
+                </div>
+                <button class="delete-button" id="deleteButton-${index}">x</button>
+            </div>`;
+            
         const deleteButton = taskContainer.querySelector(`#deleteButton-${index}`);
         deleteButton.addEventListener('click', () => deleteTask(index));
 
@@ -76,9 +84,9 @@ function MainPage() {
         editMenu.style.display = 'none';
         editMenu.innerHTML = `
             <div class="block-buttons">
-                <button class="button-share"><img src="../icons/Share.svg" alt=""></button>
+                <button class="button-share"><img src="../icons/Share.svg" alt="Share"></button>
                 <button class="button-i">i</button>
-                <button class="button-edit"><img src="../icons/edit.svg" alt=""></button>
+                <button class="button-edit"><img src="../icons/edit.svg" alt="Edit"></button>
             </div>`;
 
         const buttonShare = editMenu.querySelector('.button-share');
@@ -88,15 +96,14 @@ function MainPage() {
         buttonShare.addEventListener('click', () => Share());
         buttonEdit.addEventListener('click', () => Edit(index));
 
-        taskElement.appendChild(taskContainer);
-        taskElement.appendChild(editMenu);
+        taskContainer.appendChild(editMenu);
 
-        taskContainer.addEventListener('click', (event) => {
-            event.stopPropagation();
+        taskContainer.addEventListener('click', () => {
             const isEditMenuVisible = editMenu.style.display === 'flex';
             editMenu.style.display = isEditMenuVisible ? 'none' : 'flex'; 
         });
-        return taskElement;
+
+        return taskContainer;
     }
 
     function Share() {
@@ -105,11 +112,11 @@ function MainPage() {
         shareContainer.innerHTML = `
             <div class="share-container-content">
                 <div class="share-buttons">
-                    <button class="share-button"><img src="../icons/copy.svg" alt=""></button>
-                    <button class="vk-button"><img src="../icons/vk.svg" alt=""></button>
-                    <button class="telegram-button"><img src="../icons/telegram.svg" alt=""></button>
-                    <button class="whatsapp-button"><img src="../icons/whatsapp.svg" alt=""></button>
-                    <button class="facebook-button"><img src="../icons/facebook.svg" alt=""></button>
+                    <button class="share-button"><img src="../icons/copy.svg" alt="Copy"></button>
+                    <button class="vk-button"><img src="../icons/vk.svg" alt="VK"></button>
+                    <button class="telegram-button"><img src="../icons/telegram.svg" alt="Telegram"></button>
+                    <button class="whatsapp-button"><img src="../icons/whatsapp.svg" alt="WhatsApp"></button>
+                    <button class="facebook-button"><img src="../icons/facebook.svg" alt="Facebook"></button>
                 </div>
             </div>`;
         root.appendChild(shareContainer);
@@ -121,8 +128,8 @@ function MainPage() {
         editContainer.innerHTML = `
             <div class="edit-container-content">
                 <div class="edit-window">
-                    <input type="text" placeholder="Mini Input..." class="edit-title" >                    
-                    <input type="text" placeholder="Max Input..." class="edit-about" >
+                    <input type="text" value="${tasks[index].title}" class="edit-title" >                    
+                    <input type="text" value="${tasks[index].about}" class="edit-about" >
                     <div class="buttons">
                         <button class="cancel">Cancel</button>
                         <button class="save">Save</button>
@@ -138,6 +145,7 @@ function MainPage() {
         saveButton.addEventListener('click', () => {
             tasks[index].title = editContainer.querySelector('.edit-title').value;
             tasks[index].about = editContainer.querySelector('.edit-about').value;
+            localStorage.setItem('tasks', JSON.stringify(tasks));
             root.removeChild(editContainer);
             render();
         });
@@ -148,6 +156,7 @@ function MainPage() {
     }
 
     function deleteTask(index) {
+        deletebutton = true;
         const confirmationDialog = document.createElement('div');
         confirmationDialog.className = 'delete-container';
         confirmationDialog.innerHTML = `
@@ -163,6 +172,7 @@ function MainPage() {
         const noButton = confirmationDialog.querySelector('.no-button');
         yesButton.addEventListener('click', () => {
             tasks.splice(index, 1);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
             if (tasks.length === 0) {
                 hasTasks = false; 
             }

@@ -18,7 +18,7 @@
 .root{
     background-color: #1B1A17;
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -101,6 +101,8 @@
     .task-element{  
         display: flex;
         flex-direction: column; 
+
+        
         .task-container {
             max-width: 500px;
             width: 100vw;
@@ -113,11 +115,16 @@
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
+
+            &:active {
+                @include focus-color();
+            }
             &-text {
+                max-width: 400px;
                 display: flex;
-                align-items: flex-start;
                 flex-direction: column;
                 color: #F0E3CAA3;
+                word-wrap: break-word;
                 
                 h3 {
                     font-family: "Roboto";
@@ -142,9 +149,6 @@
                 color: #FF8303;
                 @include focus-color();
             }
-        }
-        .task-container:focus{
-            @include focus-color();
         }
         .edit-menu {
             max-width: 500px;
@@ -184,13 +188,13 @@
     }
 }
 .delete-container{
-    width: 100vw;
-    height: 100vh;
+    min-width: 100vw;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: #070707E3 ;
-    position: absolute;
+    position: fixed;
     &-content{
         max-width: 300px;
         width: 100vw;
@@ -234,7 +238,7 @@
     justify-content: center;
     align-items: flex-end;
     background-color: #070707E3 ;
-    position: absolute;
+    position: fixed;
     &-content{
         max-width: 400px;
         width: 100vw;
@@ -275,7 +279,7 @@
     justify-content: center;
     align-items: flex-end;
     background-color: #070707E3 ;
-    position: absolute;
+    position: fixed;
     &-content{
         max-width: 360px;
         width: 100vw;
